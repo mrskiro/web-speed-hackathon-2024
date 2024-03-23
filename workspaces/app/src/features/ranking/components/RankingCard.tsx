@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import styled from 'styled-components';
 
 import { SvgIcon } from '../../../features/icons/components/SvgIcon';
@@ -11,7 +10,6 @@ import { Spacer } from '../../../foundation/components/Spacer';
 import { Text } from '../../../foundation/components/Text';
 import { useImage } from '../../../foundation/hooks/useImage';
 import { Color, Radius, Space, Typography } from '../../../foundation/styles/variables';
-import { useBook } from '../../book/hooks/useBook';
 
 const _Wrapper = styled.li`
   width: 100%;
@@ -38,12 +36,23 @@ const _AvatarWrapper = styled.div`
 `;
 
 type Props = {
-  bookId: string;
+  book: {
+    author: {
+      image: {
+        id: string;
+      };
+      name: string;
+    };
+    description: string;
+    id: string;
+    image: {
+      id: string;
+    };
+    name: string;
+  };
 };
 
-const RankingCard: React.FC<Props> = ({ bookId }) => {
-  const { data: book } = useBook({ params: { bookId } });
-
+const RankingCard: React.FC<Props> = ({ book }) => {
   const imageUrl = useImage({ height: 96, imageId: book.image.id, width: 96 });
   const authorImageUrl = useImage({ height: 32, imageId: book.author.image.id, width: 32 });
 
@@ -105,9 +114,9 @@ const RankingCard: React.FC<Props> = ({ bookId }) => {
 
 const RankingCardWithSuspense: React.FC<Props> = (props) => {
   return (
-    <Suspense fallback={null}>
-      <RankingCard {...props} />
-    </Suspense>
+    // <Suspense fallback={null}>
+    <RankingCard {...props} />
+    // </Suspense>
   );
 };
 

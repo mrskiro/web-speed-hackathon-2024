@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import { styled } from 'styled-components';
 
 import { Flex } from '../../../foundation/components/Flex';
@@ -7,7 +6,6 @@ import { Link } from '../../../foundation/components/Link';
 import { Text } from '../../../foundation/components/Text';
 import { useImage } from '../../../foundation/hooks/useImage';
 import { Color, Radius, Space, Typography } from '../../../foundation/styles/variables';
-import { useBook } from '../hooks/useBook';
 
 const _Wrapper = styled(Link)`
   display: flex;
@@ -33,17 +31,28 @@ const _AvatarWrapper = styled.div`
 `;
 
 type Props = {
-  bookId: string;
+  book: {
+    author: {
+      image: {
+        id: string;
+      };
+      name: string;
+    };
+    id: string;
+    image: {
+      alt: string;
+      id: string;
+    };
+    name: string;
+  };
 };
 
-const BookCard: React.FC<Props> = ({ bookId }) => {
-  const { data: book } = useBook({ params: { bookId } });
-
+const BookCard: React.FC<Props> = ({ book }) => {
   const imageUrl = useImage({ height: 128, imageId: book.image.id, width: 192 });
   const authorImageUrl = useImage({ height: 32, imageId: book.author.image.id, width: 32 });
 
   return (
-    <_Wrapper href={`/books/${bookId}`}>
+    <_Wrapper href={`/books/${book.id}`}>
       {imageUrl != null && (
         <_ImgWrapper>
           <Image alt={book.image.alt} height={128} objectFit="cover" src={imageUrl} width={192} />
@@ -72,9 +81,9 @@ const BookCard: React.FC<Props> = ({ bookId }) => {
 
 const BookCardWithSuspense: React.FC<Props> = (props) => {
   return (
-    <Suspense fallback={null}>
-      <BookCard {...props} />
-    </Suspense>
+    // <Suspense fallback={null}>
+    <BookCard {...props} />
+    // </Suspense>
   );
 };
 
