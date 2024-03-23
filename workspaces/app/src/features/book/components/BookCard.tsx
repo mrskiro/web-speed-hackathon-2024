@@ -53,10 +53,18 @@ const BookCard: React.FC<Props> = ({ book }) => {
 
   return (
     <_Wrapper href={`/books/${book.id}`}>
-      {imageUrl != null && (
+      {imageUrl ? (
         <_ImgWrapper>
           <Image alt={book.image.alt} height={128} objectFit="cover" src={imageUrl} width={192} />
         </_ImgWrapper>
+      ) : (
+        <div
+          style={{
+            backgroundColor: Color.MONO_30,
+            height: 128,
+            width: 192,
+          }}
+        />
       )}
 
       <Flex align="stretch" direction="column" flexGrow={1} gap={Space * 1} justify="space-between" p={Space * 2}>
@@ -65,10 +73,19 @@ const BookCard: React.FC<Props> = ({ book }) => {
         </Text>
 
         <Flex align="center" gap={Space * 1} justify="flex-end">
-          {authorImageUrl != null && (
+          {authorImageUrl ? (
             <_AvatarWrapper>
               <Image alt={book.author.name} height={32} objectFit="cover" src={authorImageUrl} width={32} />
             </_AvatarWrapper>
+          ) : (
+            <div
+              style={{
+                backgroundColor: Color.MONO_30,
+                borderRadius: '50%',
+                height: 32,
+                width: 32,
+              }}
+            />
           )}
           <Text color={Color.MONO_100} typography={Typography.NORMAL12}>
             {book.author.name}
