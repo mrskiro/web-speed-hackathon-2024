@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useInterval, useUpdate } from 'react-use';
 import styled from 'styled-components';
 
 import { ComicViewerCore } from '../../../features/viewer/components/ComicViewerCore';
@@ -33,8 +32,6 @@ type Props = {
 
 export const ComicViewer: React.FC<Props> = ({ episodeId }) => {
   // 画面のリサイズに合わせて再描画する
-  const rerender = useUpdate();
-  useInterval(rerender, 0);
 
   const [el, ref] = useState<HTMLDivElement | null>(null);
 
