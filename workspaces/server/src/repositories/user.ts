@@ -51,11 +51,21 @@ class UserRepository implements UserRepositoryInterface {
     try {
       const response = await getDatabase().query.user.findFirst({
         columns: {
+          description: true,
+          email: true,
           id: true,
           password: true,
         },
         where(user, { eq }) {
           return eq(user.email, options.body.email);
+        },
+        with: {
+          image: {
+            columns: {
+              alt: true,
+              id: true,
+            },
+          },
         },
       });
 
@@ -63,7 +73,7 @@ class UserRepository implements UserRepositoryInterface {
         throw new HTTPException(401, { message: `Faild to login user:${options.body.email}.` });
       }
 
-      return this.getUser({ internal: { userId: response.id } });
+      return ok(response);
     } catch (cause) {
       if (cause instanceof HTTPException) {
         return err(cause);
