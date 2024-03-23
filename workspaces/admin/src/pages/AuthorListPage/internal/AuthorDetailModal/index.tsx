@@ -15,10 +15,9 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
-import { useToggle } from '@uidotdev/usehooks';
+import { useState } from 'react';
 
 import { useAuthor } from '../../../../features/authors/hooks/useAuthor';
-import { useBookList } from '../../../../features/books/hooks/useBookList';
 
 import { AuthorDetailContent } from './AuthorDetailContent';
 import { AuthorEditContent } from './AuthorEditContent';
@@ -30,11 +29,11 @@ export type Props = {
 };
 
 export const AuthorDetailModal: React.FC<Props> = ({ authorId, isOpen, onClose }) => {
-  const { data: allBookList } = useBookList();
   const { data: author } = useAuthor({ authorId });
-  const [isEdit, toggleIsEdit] = useToggle(false);
-
-  const bookList = allBookList?.filter((book) => book.author.id === authorId);
+  const [isEdit, setIsEdit] = useState(false);
+  const toggleIsEdit = () => {
+    setIsEdit((v) => !v);
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="4xl">
@@ -42,7 +41,7 @@ export const AuthorDetailModal: React.FC<Props> = ({ authorId, isOpen, onClose }
       <ModalContent containerProps={{ p: 8 }} height="100%" m={0} overflowY="auto">
         <ModalCloseButton />
         <Stack height="100%" p={4}>
-          {author != null && (
+          {author != null ? (
             <>
               {isEdit ? (
                 <AuthorEditContent author={author} onEditComplete={() => toggleIsEdit()} />
@@ -50,14 +49,16 @@ export const AuthorDetailModal: React.FC<Props> = ({ authorId, isOpen, onClose }
                 <AuthorDetailContent author={author} onCloseDialog={onClose} onEdit={() => toggleIsEdit()} />
               )}
             </>
+          ) : (
+            <div style={{ height: 176, width: 864 }} />
           )}
 
           <Divider />
 
           <Flex flexGrow={1} flexShrink={1} overflow="hidden">
-            {bookList != null && (
+            {author?.books != null && (
               <>
-                {bookList.length !== 0 ? (
+                {author.books.length !== 0 ? (
                   <TableContainer flexGrow={1} flexShrink={1} overflowY="auto">
                     <Table aria-label="作品一覧" variant="striped">
                       <Thead backgroundColor="white" position="sticky" top={0} zIndex={1}>
@@ -66,7 +67,7 @@ export const AuthorDetailModal: React.FC<Props> = ({ authorId, isOpen, onClose }
                         </Tr>
                       </Thead>
                       <Tbody>
-                        {bookList.map((book) => (
+                        {author.books.map((book) => (
                           <Tr key={book.id}>
                             <Td verticalAlign="middle">
                               <Text fontWeight="bold">{book.name}</Text>
