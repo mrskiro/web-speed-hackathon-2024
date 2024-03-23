@@ -1,8 +1,6 @@
 import { Suspense, useId } from 'react';
 
 import { BookCard } from '../../features/book/components/BookCard';
-import { FeatureCard } from '../../features/feature/components/FeatureCard';
-import { useFeatureList } from '../../features/feature/hooks/useFeatureList';
 import { RankingCard } from '../../features/ranking/components/RankingCard';
 import { useRankingList } from '../../features/ranking/hooks/useRankingList';
 import { useRelease } from '../../features/release/hooks/useRelease';
@@ -14,11 +12,12 @@ import { Color, Space, Typography } from '../../foundation/styles/variables';
 import { getDayOfWeekStr } from '../../lib/date/getDayOfWeekStr';
 
 import { CoverSection } from './internal/CoverSection';
+import { FeatureList } from './internal/FeatureList';
 
 const TopPage: React.FC = () => {
   const todayStr = getDayOfWeekStr(new Date());
   const { data: release } = useRelease({ params: { dayOfWeek: todayStr } });
-  const { data: featureList } = useFeatureList({ query: {} });
+
   const { data: rankingList } = useRankingList({ query: {} });
 
   const pickupA11yId = useId();
@@ -36,13 +35,7 @@ const TopPage: React.FC = () => {
             ピックアップ
           </Text>
           <Spacer height={Space * 2} />
-          <Box maxWidth="100%" overflowX="scroll" overflowY="hidden">
-            <Flex align="stretch" direction="row" gap={Space * 2} justify="flex-start">
-              {featureList.map((feature) => (
-                <FeatureCard key={feature.id} book={feature.book} />
-              ))}
-            </Flex>
-          </Box>
+          <FeatureList />
         </Box>
 
         <Spacer height={Space * 2} />
