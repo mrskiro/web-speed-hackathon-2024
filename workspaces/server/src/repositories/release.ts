@@ -45,14 +45,14 @@ class ReleaseRepository implements ReleaseRepositoryInterface {
         with: {
           books: {
             columns: {
-              description: true,
+              // description: true,
               id: true,
               name: true,
             },
             with: {
               author: {
                 columns: {
-                  description: true,
+                  // description: true,
                   id: true,
                   name: true,
                 },
@@ -65,14 +65,14 @@ class ReleaseRepository implements ReleaseRepositoryInterface {
                   },
                 },
               },
-              episodes: {
-                columns: {
-                  chapter: true,
-                  description: true,
-                  id: true,
-                  name: true,
-                },
-              },
+              // episodes: {
+              //   columns: {
+              //     chapter: true,
+              //     description: true,
+              //     id: true,
+              //     name: true,
+              //   },
+              // },
               image: {
                 columns: {
                   alt: true,
