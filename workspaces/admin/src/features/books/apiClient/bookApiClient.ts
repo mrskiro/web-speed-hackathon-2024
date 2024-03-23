@@ -5,7 +5,7 @@ import type { DeleteBookResponse } from '@wsh-2024/schema/src/api/books/DeleteBo
 import type { GetBookListRequestQuery } from '@wsh-2024/schema/src/api/books/GetBookListRequestQuery';
 import type { GetBookListResponse } from '@wsh-2024/schema/src/api/books/GetBookListResponse';
 import type { GetBookRequestParams } from '@wsh-2024/schema/src/api/books/GetBookRequestParams';
-import type { GetBookResponse } from '@wsh-2024/schema/src/api/books/GetBookResponse';
+import type { GetBookAdminResponse } from '@wsh-2024/schema/src/api/books/GetBookResponse';
 import type { PatchBookRequestBody } from '@wsh-2024/schema/src/api/books/PatchBookRequestBody';
 import type { PatchBookRequestParams } from '@wsh-2024/schema/src/api/books/PatchBookRequestParams';
 import type { PatchBookResponse } from '@wsh-2024/schema/src/api/books/PatchBookResponse';
@@ -17,7 +17,7 @@ import { apiClient } from '../../../lib/api/apiClient';
 
 type BookApiClient = DomainSpecificApiClientInterface<{
   delete: [{ params: DeleteBookRequestParams }, DeleteBookResponse];
-  fetch: [{ params: GetBookRequestParams }, GetBookResponse];
+  fetch: [{ params: GetBookRequestParams }, GetBookAdminResponse];
   fetchList: [{ query: GetBookListRequestQuery }, GetBookListResponse];
   post: [{ body: PostBookRequestBody }, PostBookResponse];
   update: [{ body: PatchBookRequestBody; params: PatchBookRequestParams }, PatchBookResponse];
@@ -36,26 +36,26 @@ export const bookApiClient: BookApiClient = {
     options,
   ],
   fetch: async ({ params }) => {
-    const response = await apiClient.get(inject('api/v1/books/:bookId', params)).json<GetBookResponse>();
+    const response = await apiClient.get(inject('api/v1/admin/books/:bookId', params)).json<GetBookAdminResponse>();
     return response;
   },
   fetch$$key: (options) => [
     {
       method: 'get',
-      requestUrl: '/api/v1/books/:bookId',
+      requestUrl: '/api/v1/admin/books/:bookId',
     },
     options,
   ],
   fetchList: async ({ query }) => {
     const response = await apiClient
-      .get(inject('api/v1/books', {}), { searchParams: query })
+      .get(inject('api/v1/admin/books', {}), { searchParams: query })
       .json<GetBookListResponse>();
     return response;
   },
   fetchList$$key: (options) => [
     {
       method: 'get',
-      requestUrl: '/api/v1/books',
+      requestUrl: '/api/v1/admin/books',
     },
     options,
   ],

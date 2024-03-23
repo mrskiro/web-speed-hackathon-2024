@@ -19,12 +19,18 @@ export const useCreateBook = () => {
 
   return useMutation({
     mutationFn: async ({ authorId, description, image, name, nameRuby, releaseId }: CreateBookPayload) => {
-      const { id: imageId } = await imageApiClient.post({
-        body: {
-          alt: image.name,
-          content: image,
-        },
-      });
+      const imageId = await (async () => {
+        if (image == null) {
+          return '';
+        }
+        const { id: imageId } = await imageApiClient.post({
+          body: {
+            alt: image.name,
+            content: image,
+          },
+        });
+        return imageId;
+      })();
 
       return bookApiClient.post({
         body: {

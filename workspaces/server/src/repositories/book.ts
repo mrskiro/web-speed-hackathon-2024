@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 import { err, ok } from 'neverthrow';
 import type { Result } from 'neverthrow';
@@ -6,9 +6,9 @@ import type { Result } from 'neverthrow';
 import type { DeleteBookRequestParams } from '@wsh-2024/schema/src/api/books/DeleteBookRequestParams';
 import type { DeleteBookResponse } from '@wsh-2024/schema/src/api/books/DeleteBookResponse';
 import type { GetBookListRequestQuery } from '@wsh-2024/schema/src/api/books/GetBookListRequestQuery';
-import type { GetBookListResponse } from '@wsh-2024/schema/src/api/books/GetBookListResponse';
+import type { GetBookListAdminResponse, GetBookListResponse } from '@wsh-2024/schema/src/api/books/GetBookListResponse';
 import type { GetBookRequestParams } from '@wsh-2024/schema/src/api/books/GetBookRequestParams';
-import type { GetBookResponse } from '@wsh-2024/schema/src/api/books/GetBookResponse';
+import type { GetBookAdminResponse, GetBookResponse } from '@wsh-2024/schema/src/api/books/GetBookResponse';
 import type { PatchBookRequestBody } from '@wsh-2024/schema/src/api/books/PatchBookRequestBody';
 import type { PatchBookRequestParams } from '@wsh-2024/schema/src/api/books/PatchBookRequestParams';
 import type { PatchBookResponse } from '@wsh-2024/schema/src/api/books/PatchBookResponse';
@@ -61,6 +61,46 @@ class BookRepository implements BookRepositoryInterface {
           episodes: {
             columns: {
               id: true,
+            },
+          },
+          image: {
+            columns: {
+              alt: true,
+              id: true,
+            },
+          },
+        },
+      });
+
+      if (data == null) {
+        throw new HTTPException(404, { message: `Book:${options.params.bookId} is not found` });
+      }
+      return ok(data);
+    } catch (cause) {
+      if (cause instanceof HTTPException) {
+        return err(cause);
+      }
+      return err(new HTTPException(500, { cause, message: `Failed to read book:${options.params.bookId}.` }));
+    }
+  }
+
+  async readForAdmin(options: { params: GetBookRequestParams }): Promise<Result<GetBookAdminResponse, HTTPException>> {
+    try {
+      const data = await getDatabase().query.book.findFirst({
+        columns: {
+          description: true,
+          id: true,
+          name: true,
+          nameRuby: true,
+        },
+        where(book, { eq }) {
+          return eq(book.id, options.params.bookId);
+        },
+        with: {
+          episodes: {
+            columns: {
+              id: true,
+              name: true,
             },
           },
           image: {
@@ -149,6 +189,51 @@ class BookRepository implements BookRepositoryInterface {
     }
   }
 
+  async readAllForAdmin(options: {
+    query: GetBookListRequestQuery;
+  }): Promise<Result<GetBookListAdminResponse, HTTPException>> {
+    try {
+      const data = await getDatabase().query.book.findMany({
+        columns: {
+          id: true,
+          name: true,
+          nameRuby: true,
+        },
+        limit: options.query.limit,
+        offset: options.query.offset,
+        orderBy(book, { asc }) {
+          return asc(book.createdAt);
+        },
+        where(book, { eq, like, or }) {
+          if (options.query.authorId != null) {
+            return eq(book.authorId, options.query.authorId);
+          }
+          if (options.query.authorName != null) {
+            return like(author.name, `%${options.query.authorName}%`);
+          }
+          if (options.query.name != null) {
+            return or(like(book.name, `%${options.query.name}%`), like(book.nameRuby, `%${options.query.name}%`));
+          }
+          return;
+        },
+        with: {
+          author: {
+            columns: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      return ok(data);
+    } catch (cause) {
+      if (cause instanceof HTTPException) {
+        return err(cause);
+      }
+      return err(new HTTPException(500, { cause, message: `Failed to read book list.` }));
+    }
+  }
   async create(options: { body: PostBookRequestBody }): Promise<Result<PostBookResponse, HTTPException>> {
     try {
       const result = await getDatabase().insert(book).values(options.body).returning({ bookId: book.id }).execute();
@@ -184,11 +269,7 @@ class BookRepository implements BookRepositoryInterface {
       if (result[0] == null) {
         throw new HTTPException(500, { message: `Failed to update book:${options.params.bookId}.` });
       }
-      return this.read({
-        params: {
-          bookId: result[0].bookId,
-        },
-      });
+      return ok({});
     } catch (cause) {
       if (cause instanceof HTTPException) {
         return err(cause);
@@ -210,9 +291,15 @@ class BookRepository implements BookRepositoryInterface {
             episodeId: episode.id,
           })
           .execute();
-        for (const episode of deleteEpisodeRes) {
-          await tx.delete(episodePage).where(eq(episodePage.episodeId, episode.episodeId)).execute();
-        }
+        await tx
+          .delete(episodePage)
+          .where(
+            inArray(
+              episodePage.episodeId,
+              deleteEpisodeRes.map((e) => e.episodeId),
+            ),
+          )
+          .execute();
       });
 
       return ok({});

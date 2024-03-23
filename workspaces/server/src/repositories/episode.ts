@@ -196,20 +196,12 @@ class EpisodeRepository implements EpisodeRepositoryInterface {
 
   async create(options: { body: PostEpisodeRequestBody }): Promise<Result<PostEpisodeResponse, HTTPException>> {
     try {
-      const result = await getDatabase()
-        .insert(episode)
-        .values(options.body)
-        .returning({ episodeId: episode.id })
-        .execute();
+      const result = await getDatabase().insert(episode).values(options.body).returning({ id: episode.id }).execute();
 
       if (result[0] == null) {
         throw new HTTPException(500, { message: 'Failed to create episode.' });
       }
-      return this.read({
-        params: {
-          episodeId: result[0].episodeId,
-        },
-      });
+      return ok(result[0]);
     } catch (cause) {
       if (cause instanceof HTTPException) {
         return err(cause);

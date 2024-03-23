@@ -20,7 +20,6 @@ import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 
 import { useBook } from '../../../../features/books/hooks/useBook';
-import { useEpisodeList } from '../../../../features/episodes/hooks/useEpisodeList';
 
 import { BookDetailContent } from './BookDetailContent';
 import { BookEditContent } from './BookEditContent';
@@ -32,7 +31,6 @@ type Props = {
 };
 
 export const BookDetailModal: React.FC<Props> = ({ bookId, isOpen, onClose }) => {
-  const { data: episodeList } = useEpisodeList({ bookId });
   const { data: book } = useBook({ bookId });
 
   const [isEdit, setIsEdit] = useState(false);
@@ -59,9 +57,9 @@ export const BookDetailModal: React.FC<Props> = ({ bookId, isOpen, onClose }) =>
           <Divider />
 
           <Flex flexGrow={1} flexShrink={1} overflow="hidden">
-            {episodeList != null && (
+            {book?.episodes != null && (
               <>
-                {episodeList.length !== 0 ? (
+                {book.episodes.length !== 0 ? (
                   <TableContainer flexGrow={1} flexShrink={1} overflowY="auto">
                     <Table aria-label="エピソード一覧" variant="striped">
                       <Thead backgroundColor="white" position="sticky" top={0} zIndex={1}>
@@ -71,7 +69,7 @@ export const BookDetailModal: React.FC<Props> = ({ bookId, isOpen, onClose }) =>
                         </Tr>
                       </Thead>
                       <Tbody>
-                        {episodeList.map((episode) => (
+                        {book.episodes.map((episode) => (
                           <Tr key={episode.id}>
                             <Td textAlign="center" verticalAlign="middle">
                               <Button

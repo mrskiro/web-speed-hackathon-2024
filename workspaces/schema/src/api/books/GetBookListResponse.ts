@@ -16,17 +16,6 @@ export const GetBookListResponseSchema = createSelectSchema(book)
       id: true,
       name: true,
     }),
-    // .extend({
-    //   image: createSelectSchema(image).pick({
-    //     alt: true,
-    //     id: true,
-    //   }),
-    // }),
-    // episodes: createSelectSchema(episode)
-    //   .pick({
-    //     id: true,
-    //   })
-    //   .array(),
     image: createSelectSchema(image).pick({
       alt: true,
       id: true,
@@ -35,3 +24,19 @@ export const GetBookListResponseSchema = createSelectSchema(book)
   .array();
 
 export type GetBookListResponse = z.infer<typeof GetBookListResponseSchema>;
+
+export const GetBookListAdminResponseSchema = createSelectSchema(book)
+  .pick({
+    id: true,
+    name: true,
+    nameRuby: true,
+  })
+  .extend({
+    author: createSelectSchema(author).pick({
+      id: true,
+      name: true,
+    }),
+  })
+  .array();
+
+export type GetBookListAdminResponse = z.infer<typeof GetBookListAdminResponseSchema>;

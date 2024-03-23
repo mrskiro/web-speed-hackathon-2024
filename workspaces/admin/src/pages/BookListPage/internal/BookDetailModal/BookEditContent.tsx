@@ -18,13 +18,13 @@ import { useFormik } from 'formik';
 import { useEffect, useRef, useState } from 'react';
 import * as yup from 'yup';
 
-import type { GetBookResponse } from '@wsh-2024/schema/src/api/books/GetBookResponse';
+import type { GetBookAdminResponse } from '@wsh-2024/schema/src/api/books/GetBookResponse';
 
 import { useUpdateBook } from '../../../../features/books/hooks/useUpdateBook';
 import { isSupportedImage } from '../../../../lib/image/isSupportedImage';
 
 type BookEditContentProps = {
-  book: GetBookResponse;
+  book: GetBookAdminResponse;
   onEditComplete: () => void;
 };
 

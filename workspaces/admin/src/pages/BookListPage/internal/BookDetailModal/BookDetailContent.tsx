@@ -1,14 +1,14 @@
 import { Box, Button, Flex, Image, Stack, StackItem, Text } from '@chakra-ui/react';
 import { useCallback } from 'react';
 
-import type { GetBookResponse } from '@wsh-2024/schema/src/api/books/GetBookResponse';
+import type { GetBookAdminResponse } from '@wsh-2024/schema/src/api/books/GetBookResponse';
 
 import { useBookList } from '../../../../features/books/hooks/useBookList';
 import { useDeleteBook } from '../../../../features/books/hooks/useDeleteBook';
 import { getImageUrl } from '../../../../lib/image/getImageUrl';
 
 type BookDetailContentProps = {
-  book: GetBookResponse;
+  book: GetBookAdminResponse;
   onCloseDialog: () => void;
   onEdit: () => void;
 };

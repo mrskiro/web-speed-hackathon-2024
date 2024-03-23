@@ -24,7 +24,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as yup from 'yup';
 
 import { encrypt } from '@wsh-2024/image-encrypt/src/encrypt';
-import type { GetBookResponse } from '@wsh-2024/schema/src/api/books/GetBookResponse';
+import type { GetBookAdminResponse } from '@wsh-2024/schema/src/api/books/GetBookResponse';
 import type { GetEpisodeResponse } from '@wsh-2024/schema/src/api/episodes/GetEpisodeResponse';
 
 import { getImageUrl } from '../../../lib/image/getImageUrl';
@@ -38,7 +38,7 @@ import { useUpdateEpisode } from '../hooks/useUpdateEpisode';
 import { ComicPageImage } from './ComicPageImage';
 
 type Props = {
-  book: GetBookResponse;
+  book: GetBookAdminResponse;
   episode?: GetEpisodeResponse;
 };
 

@@ -35,3 +35,25 @@ export const GetBookResponseSchema = createSelectSchema(book)
   });
 
 export type GetBookResponse = z.infer<typeof GetBookResponseSchema>;
+
+export const GetBookAdminResponseSchema = createSelectSchema(book)
+  .pick({
+    description: true,
+    id: true,
+    name: true,
+    nameRuby: true,
+  })
+  .extend({
+    episodes: createSelectSchema(episode)
+      .pick({
+        id: true,
+        name: true,
+      })
+      .array(),
+    image: createSelectSchema(image).pick({
+      alt: true,
+      id: true,
+    }),
+  });
+
+export type GetBookAdminResponse = z.infer<typeof GetBookAdminResponseSchema>;
