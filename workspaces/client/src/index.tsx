@@ -12,8 +12,7 @@ const main = async () => {
   // await preloadImages();
   const root = document.getElementById('root');
 
-  ReactDOM.hydrateRoot(
-    root!,
+  ReactDOM.createRoot(root!).render(
     <SWRConfig value={{ revalidateIfStale: true, revalidateOnFocus: false, revalidateOnReconnect: false }}>
       <BrowserRouter>
         <ClientApp />
