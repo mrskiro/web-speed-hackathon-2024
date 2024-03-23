@@ -53,6 +53,7 @@ export default defineConfig(async (): Promise<Options[]> => {
       loader: {
         '.json?file': 'file',
         '.wasm': 'binary',
+        '.webp': 'file',
       },
       metafile: true,
       minify: true,
