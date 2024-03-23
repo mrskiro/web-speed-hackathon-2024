@@ -6,7 +6,7 @@ const _Wrapper = styled.div`
 `;
 
 const _Image = styled.img`
-  display: inline-block;
+  height: auto;
   aspect-ratio: 16 / 9;
   width: 100%;
 `;

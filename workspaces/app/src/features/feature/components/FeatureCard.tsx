@@ -65,10 +65,19 @@ const FeatureCard: React.FC<Props> = ({ book }) => {
 
   return (
     <_Wrapper href={`/books/${book.id}`}>
-      {imageUrl != null && (
+      {imageUrl ? (
         <_ImgWrapper>
           <Image alt={book.image.alt} height={96} objectFit="cover" src={imageUrl} width={96} />
         </_ImgWrapper>
+      ) : (
+        <div
+          style={{
+            backgroundColor: Color.MONO_30,
+            borderRadius: Radius.SMALL,
+            height: 96,
+            width: 96,
+          }}
+        />
       )}
 
       <_ContentWrapper>
@@ -80,10 +89,19 @@ const FeatureCard: React.FC<Props> = ({ book }) => {
         </Text>
 
         <Flex align="center" gap={Space * 1} justify="flex-end">
-          {authorImageUrl != null && (
+          {authorImageUrl ? (
             <_AvatarWrapper>
               <Image alt={book.author.name} height={32} objectFit="cover" src={authorImageUrl} width={32} />
             </_AvatarWrapper>
+          ) : (
+            <div
+              style={{
+                backgroundColor: Color.MONO_30,
+                borderRadius: '50%',
+                height: 32,
+                width: 32,
+              }}
+            />
           )}
           <Text color={Color.MONO_100} typography={Typography.NORMAL14}>
             {book.author.name}
