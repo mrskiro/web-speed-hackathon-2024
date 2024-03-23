@@ -57,7 +57,7 @@ export const BottomNavigator: React.FC<Props> = ({ bookId, isFavorite, latestEpi
       <animated.div style={props}>
         <_Content>
           <FavButton enabled={isFavorite} onClick={handleFavClick} />
-          <_ReadLink to={`/books/${bookId}/episodes/${latestEpisodeId}`}>最新話を読む</_ReadLink>
+          <_ReadLink href={`/books/${bookId}/episodes/${latestEpisodeId}`}>最新話を読む</_ReadLink>
         </_Content>
       </animated.div>
     </_Wrapper>
