@@ -1,6 +1,5 @@
-import { animated, useSpring } from '@react-spring/web';
 import { useCallback } from 'react';
-import { styled } from 'styled-components';
+import { keyframes, styled } from 'styled-components';
 
 import { Link } from '../../../foundation/components/Link';
 import { Color, Radius, Space } from '../../../foundation/styles/variables';
@@ -12,6 +11,19 @@ const _Wrapper = styled.div`
   bottom: ${Space * 4}px;
   left: 50%;
   transform: translateX(-50%);
+`;
+
+const anime = keyframes`
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0px);
+  }
+`;
+
+const Anime = styled.div`
+  animation: ${anime} 1s ease forwards;
 `;
 
 const _Content = styled.div`
@@ -43,23 +55,18 @@ type Props = {
 };
 
 export const BottomNavigator: React.FC<Props> = ({ bookId, isFavorite, latestEpisodeId, onClickFav }) => {
-  const props = useSpring({
-    from: { transform: 'translateY(100%)' },
-    to: { transform: 'translateY(0)' },
-  });
-
   const handleFavClick = useCallback(() => {
     onClickFav();
   }, [onClickFav]);
 
   return (
     <_Wrapper>
-      <animated.div style={props}>
+      <Anime>
         <_Content>
           <FavButton enabled={isFavorite} onClick={handleFavClick} />
           <_ReadLink href={`/books/${bookId}/episodes/${latestEpisodeId}`}>最新話を読む</_ReadLink>
         </_Content>
-      </animated.div>
+      </Anime>
     </_Wrapper>
   );
 };
