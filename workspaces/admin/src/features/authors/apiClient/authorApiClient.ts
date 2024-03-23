@@ -3,9 +3,9 @@ import { inject } from 'regexparam';
 import type { DeleteAuthorRequestParams } from '@wsh-2024/schema/src/api/authors/DeleteAuthorRequestParams';
 import type { DeleteAuthorResponse } from '@wsh-2024/schema/src/api/authors/DeleteAuthorResponse';
 import type { GetAuthorListRequestQuery } from '@wsh-2024/schema/src/api/authors/GetAuthorListRequestQuery';
-import type { GetAuthorListResponse } from '@wsh-2024/schema/src/api/authors/GetAuthorListResponse';
+import type { GetAuthorListAdminResponse } from '@wsh-2024/schema/src/api/authors/GetAuthorListResponse';
 import type { GetAuthorRequestParams } from '@wsh-2024/schema/src/api/authors/GetAuthorRequestParams';
-import type { GetAuthorResponse } from '@wsh-2024/schema/src/api/authors/GetAuthorResponse';
+import type { GetAuthorAdminResponse } from '@wsh-2024/schema/src/api/authors/GetAuthorResponse';
 import type { PatchAuthorRequestBody } from '@wsh-2024/schema/src/api/authors/PatchAuthorRequestBody';
 import type { PatchAuthorRequestParams } from '@wsh-2024/schema/src/api/authors/PatchAuthorRequestParams';
 import type { PatchAuthorResponse } from '@wsh-2024/schema/src/api/authors/PatchAuthorResponse';
@@ -17,8 +17,8 @@ import { apiClient } from '../../../lib/api/apiClient';
 
 type AuthorApiClient = DomainSpecificApiClientInterface<{
   delete: [{ params: DeleteAuthorRequestParams }, DeleteAuthorResponse];
-  fetch: [{ params: GetAuthorRequestParams }, GetAuthorResponse];
-  fetchList: [{ query: GetAuthorListRequestQuery }, GetAuthorListResponse];
+  fetch: [{ params: GetAuthorRequestParams }, GetAuthorAdminResponse];
+  fetchList: [{ query: GetAuthorListRequestQuery }, GetAuthorListAdminResponse];
   post: [{ body: PostAuthorRequestBody }, PostAuthorResponse];
   update: [{ body: PatchAuthorRequestBody; params: PatchAuthorRequestParams }, PatchAuthorResponse];
 }>;
@@ -36,26 +36,28 @@ export const authorApiClient: AuthorApiClient = {
     options,
   ],
   fetch: async ({ params }) => {
-    const response = await apiClient.get(inject('api/v1/authors/:authorId', params)).json<GetAuthorResponse>();
+    const response = await apiClient
+      .get(inject('api/v1/admin/authors/:authorId', params))
+      .json<GetAuthorAdminResponse>();
     return response;
   },
   fetch$$key: (options) => [
     {
       method: 'get',
-      requestUrl: '/api/v1/authors/:authorId',
+      requestUrl: '/api/v1/admin/authors/:authorId',
     },
     options,
   ],
   fetchList: async ({ query }) => {
     const response = await apiClient
-      .get(inject('api/v1/authors', {}), { searchParams: query })
-      .json<GetAuthorListResponse>();
+      .get(inject('api/v1/admin/authors', {}), { searchParams: query })
+      .json<GetAuthorListAdminResponse>();
     return response;
   },
   fetchList$$key: (options) => [
     {
       method: 'get',
-      requestUrl: '/api/v1/authors',
+      requestUrl: '/api/v1/admin/authors',
     },
     options,
   ],

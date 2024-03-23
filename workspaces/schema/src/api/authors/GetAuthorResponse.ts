@@ -38,3 +38,25 @@ export const GetAuthorResponseSchema = createSelectSchema(author)
   });
 
 export type GetAuthorResponse = z.infer<typeof GetAuthorResponseSchema>;
+
+export const GetAuthorAdminResponseSchema = createSelectSchema(author)
+  .pick({
+    description: true,
+    id: true,
+    name: true,
+  })
+  .extend({
+    books: createSelectSchema(book)
+      .pick({
+        description: true,
+        id: true,
+        name: true,
+      })
+      .array(),
+    image: createSelectSchema(image).pick({
+      alt: true,
+      id: true,
+    }),
+  });
+
+export type GetAuthorAdminResponse = z.infer<typeof GetAuthorAdminResponseSchema>;

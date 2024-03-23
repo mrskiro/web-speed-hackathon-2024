@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 import { err, ok } from 'neverthrow';
 import type { Result } from 'neverthrow';
@@ -8,7 +8,7 @@ import type { DeleteAuthorResponse } from '@wsh-2024/schema/src/api/authors/Dele
 import type { GetAuthorListRequestQuery } from '@wsh-2024/schema/src/api/authors/GetAuthorListRequestQuery';
 import type { GetAuthorListResponse } from '@wsh-2024/schema/src/api/authors/GetAuthorListResponse';
 import type { GetAuthorRequestParams } from '@wsh-2024/schema/src/api/authors/GetAuthorRequestParams';
-import type { GetAuthorResponse } from '@wsh-2024/schema/src/api/authors/GetAuthorResponse';
+import type { GetAuthorAdminResponse, GetAuthorResponse } from '@wsh-2024/schema/src/api/authors/GetAuthorResponse';
 import type { PatchAuthorRequestBody } from '@wsh-2024/schema/src/api/authors/PatchAuthorRequestBody';
 import type { PatchAuthorRequestParams } from '@wsh-2024/schema/src/api/authors/PatchAuthorRequestParams';
 import type { PatchAuthorResponse } from '@wsh-2024/schema/src/api/authors/PatchAuthorResponse';
@@ -89,6 +89,51 @@ class AuthorRepository implements AuthorRepositoryInterface {
     }
   }
 
+  async readForAdmin(options: {
+    params: GetAuthorRequestParams;
+  }): Promise<Result<GetAuthorAdminResponse, HTTPException>> {
+    try {
+      const data = await getDatabase().query.author.findFirst({
+        columns: {
+          description: true,
+          id: true,
+          name: true,
+        },
+        orderBy(author, { asc }) {
+          return asc(author.createdAt);
+        },
+        where(author, { eq }) {
+          return eq(author.id, options.params.authorId);
+        },
+        with: {
+          books: {
+            columns: {
+              description: true,
+              id: true,
+              name: true,
+            },
+          },
+          image: {
+            columns: {
+              alt: true,
+              id: true,
+            },
+          },
+        },
+      });
+
+      if (data == null) {
+        throw new HTTPException(404, { message: `Author:${options.params.authorId} is not found from admin.` });
+      }
+      return ok(data);
+    } catch (cause) {
+      if (cause instanceof HTTPException) {
+        return err(cause);
+      }
+      return err(new HTTPException(500, { cause, message: `Failed to read author:${options.params.authorId}.` }));
+    }
+  }
+
   async readAll(options: { query: GetAuthorListRequestQuery }): Promise<Result<GetAuthorListResponse, HTTPException>> {
     try {
       const data = await getDatabase().query.author.findMany({
@@ -155,11 +200,7 @@ class AuthorRepository implements AuthorRepositoryInterface {
       if (result[0] == null) {
         throw new HTTPException(500, { message: `Failed to update author:${options.params.authorId}.` });
       }
-      return this.read({
-        params: {
-          authorId: result[0].authorId,
-        },
-      });
+      return ok({});
     } catch (cause) {
       if (cause instanceof HTTPException) {
         return err(cause);
@@ -179,20 +220,18 @@ class AuthorRepository implements AuthorRepositoryInterface {
             bookId: book.id,
           })
           .execute();
-        for (const book of deleteBookRes) {
-          await tx.delete(feature).where(eq(feature.bookId, book.bookId)).execute();
-          await tx.delete(ranking).where(eq(ranking.bookId, book.bookId)).execute();
-          const deleteEpisodeRes = await tx
-            .delete(episode)
-            .where(eq(episode.bookId, book.bookId))
-            .returning({
-              episodeId: episode.id,
-            })
-            .execute();
-          for (const episode of deleteEpisodeRes) {
-            await tx.delete(episodePage).where(eq(episodePage.episodeId, episode.episodeId)).execute();
-          }
-        }
+        const bookIds = deleteBookRes.map((book) => book.bookId);
+        await tx.delete(feature).where(inArray(feature.bookId, bookIds)).execute();
+        await tx.delete(ranking).where(inArray(ranking.bookId, bookIds)).execute();
+        const deleteEpisodeRes = await tx
+          .delete(episode)
+          .where(inArray(episode.bookId, bookIds))
+          .returning({
+            episodeId: episode.id,
+          })
+          .execute();
+        const episodeIds = deleteEpisodeRes.map((episode) => episode.episodeId);
+        await tx.delete(episodePage).where(inArray(episodePage.episodeId, episodeIds)).execute();
       });
 
       return ok({});

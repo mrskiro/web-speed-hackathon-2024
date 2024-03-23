@@ -38,3 +38,12 @@ export const GetAuthorListResponseSchema = createSelectSchema(author)
   .array();
 
 export type GetAuthorListResponse = z.infer<typeof GetAuthorListResponseSchema>;
+
+export const GetAuthorListAdminResponseSchema = createSelectSchema(author)
+  .pick({
+    id: true,
+    name: true,
+  })
+  .array();
+
+export type GetAuthorListAdminResponse = z.infer<typeof GetAuthorListAdminResponseSchema>;
