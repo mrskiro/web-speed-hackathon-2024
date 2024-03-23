@@ -9,19 +9,15 @@ import { Input } from './internal/Input';
 import { SearchResult } from './internal/SearchResult';
 
 const SearchPage: React.FC = () => {
-  const { data: books } = useBookList({ query: {} });
-
   const searchResultsA11yId = useId();
 
   const [isClient, setIsClient] = useState(false);
   const [keyword, setKeyword] = useState('');
+  const { data: books, isLoading } = useBookList({ query: { name: kanaToHiragana(keyword) } });
 
-  const onChangedInput = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setKeyword(event.target.value);
-    },
-    [setKeyword],
-  );
+  const onChangedInput = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setKeyword(event.target.value);
+  }, []);
 
   useEffect(() => {
     setIsClient(true);
@@ -34,7 +30,8 @@ const SearchPage: React.FC = () => {
         <Text color={Color.MONO_100} id={searchResultsA11yId} typography={Typography.NORMAL20} weight="bold">
           検索結果
         </Text>
-        {keyword !== '' && <SearchResult books={books} keyword={keyword} />}
+        {/* booksがemptyのとき Emptyになるため bool判定している */}
+        {keyword === '' ? null : isLoading ? null : <SearchResult books={books ? books : []} />}
       </Box>
     </Box>
   );
@@ -49,3 +46,10 @@ const SearchPageWithSuspense: React.FC = () => {
 };
 
 export { SearchPageWithSuspense as SearchPage };
+
+function kanaToHiragana(str: string) {
+  return str.replace(/[\u30A1-\u30F6]/g, function (match) {
+    const charCode = match.charCodeAt(0) - 0x60;
+    return String.fromCharCode(charCode);
+  });
+}
