@@ -19,6 +19,9 @@ self.addEventListener('activate', (ev: ExtendableEvent) => {
 });
 
 self.addEventListener('fetch', (ev: FetchEvent) => {
+  if (!ev.request.url.includes('jxl')) {
+    return;
+  }
   ev.respondWith(
     queue.add(() => onFetch(ev.request), {
       throwOnTimeout: true,
