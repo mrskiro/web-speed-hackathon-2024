@@ -8,7 +8,8 @@
     "start:debug": "DEBUG=pw:api run-s start:client:debug start:admin:debug",
     "start:client:debug": "playwright test --debug ./src/client",
     "start:admin:debug": "playwright test --workers=1 --debug ./src/admin",
-    "e2e:admin": "E2E_BASE_URL=https://possible-gabriel-mrskiro.koyeb.app/ pnpm run start:admin"
+    "e2e:admin": "E2E_BASE_URL=https://possible-gabriel-mrskiro.koyeb.app/ pnpm run start:admin",
+    "e2e:client": "E2E_BASE_URL=https://possible-gabriel-mrskiro.koyeb.app/ pnpm run start:client"
   },
   "devDependencies": {
     "@playwright/test": "1.42.1",

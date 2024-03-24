@@ -71,6 +71,9 @@ export const EpisodeDetailEditor: React.FC<Props> = ({ book, episode }) => {
             nameRuby: values.nameRuby!,
           },
           {
+            onError() {
+              formik.setSubmitting(false);
+            },
             onSuccess(episode) {
               navigate({
                 params: { bookId: book.id, episodeId: episode.id },
@@ -107,6 +110,8 @@ export const EpisodeDetailEditor: React.FC<Props> = ({ book, episode }) => {
         .matches(/^[\p{Script_Extensions=Hiragana}]+$/u, 'ふりがなはひらがなで入力してください'),
     }),
   });
+
+  console.log(formik);
 
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const [thumbnailUrl, updateThumbnailUrl] = useState<string | undefined>(undefined);

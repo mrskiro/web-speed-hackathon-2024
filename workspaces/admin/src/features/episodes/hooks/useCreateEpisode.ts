@@ -19,12 +19,18 @@ export const useCreateEpisode = () => {
 
   return useMutation({
     mutationFn: async ({ bookId, chapter, description, image, name, nameRuby }: CreateEpisodePayload) => {
-      const { id: imageId } = await imageApiClient.post({
-        body: {
-          alt: image.name,
-          content: image,
-        },
-      });
+      const imageId = await (async () => {
+        if (image == null) {
+          return undefined as unknown as string;
+        }
+        const { id: imageId } = await imageApiClient.post({
+          body: {
+            alt: image.name,
+            content: image,
+          },
+        });
+        return imageId;
+      })();
 
       return await episodeApiClient.post({
         body: {
