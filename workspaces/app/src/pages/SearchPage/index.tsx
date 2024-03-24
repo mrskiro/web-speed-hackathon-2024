@@ -53,3 +53,5 @@ function kanaToHiragana(str: string) {
     return String.fromCharCode(charCode);
   });
 }
+
+export default SearchPageWithSuspense;
