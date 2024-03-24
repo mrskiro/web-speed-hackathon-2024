@@ -29,7 +29,6 @@ const route = createRoute({
 app.openapi(route, async (c) => {
   const query = c.req.valid('query');
 
-  console.log('call me?', c.req);
   const res = await authorRepository.readAll({ query });
 
   if (res.isErr()) {

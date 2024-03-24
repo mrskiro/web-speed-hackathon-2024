@@ -111,8 +111,6 @@ export const EpisodeDetailEditor: React.FC<Props> = ({ book, episode }) => {
     }),
   });
 
-  console.log(formik);
-
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const [thumbnailUrl, updateThumbnailUrl] = useState<string | undefined>(undefined);
   useEffect(() => {
