@@ -40,7 +40,7 @@ test.describe('エピソード', () => {
       await page.getByRole('dialog').getByRole('button', { name: 'エピソードを追加' }).click();
     });
 
-    test.only('必要な情報を入力して作成ボタンを押すと、エピソード編集画面に遷移して入力したデータが表示されること', async ({
+    test('必要な情報を入力して作成ボタンを押すと、エピソード編集画面に遷移して入力したデータが表示されること', async ({
       page,
     }) => {
       // When
@@ -172,7 +172,7 @@ test.describe('エピソード', () => {
     });
 
     test.describe('エピソード情報の編集', () => {
-      test.only('エピソード情報がフォームとして表示されること', async ({ page }) => {
+      test('エピソード情報がフォームとして表示されること', async ({ page }) => {
         // Then
         const bookId = page.url().match(/\/books\/([a-z0-9-]+)\//)![1];
         await expect(page.getByRole('form', { name: 'エピソード情報' })).toContainText(bookId!);
