@@ -1,11 +1,13 @@
+import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Box } from '../components/Box';
 import { Container } from '../components/Container';
 import { Flex } from '../components/Flex';
-import { Footer } from '../components/Footer';
 import { Color, Space } from '../styles/variables';
+
+const Footer = lazy(() => import('../components/Footer'));
 
 const _Header = styled.header`
   padding: ${Space * 2}px;
@@ -30,8 +32,9 @@ export const ActionLayout: React.FC<Props> = ({ leftContent, rightContent }) => 
       <Box as="main" height="100%" py={Space * 2}>
         <Outlet />
       </Box>
-
-      <Footer />
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
     </Container>
   );
 };

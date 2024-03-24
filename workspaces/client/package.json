@@ -2,15 +2,17 @@
   "name": "@wsh-2024/client",
   "private": true,
   "scripts": {
-    "build": "pnpm run build:clean && pnpm run build:tsup && pnpm run build:copy",
+    "build": "pnpm run build:clean && pnpm run build:vite && pnpm run build:tsup && pnpm run build:copy",
     "build:clean": "rm -rf ./dist",
-    "build:copy": "cp -r ./assets ./dist/assets",
-    "build:tsup": "tsup"
+    "build:copy": "cp -r ./assets/magika ./dist/assets",
+    "build:tsup": "tsup",
+    "build:vite": "vite build"
   },
   "dependencies": {
     "@jsquash/jxl": "1.1.0",
     "@wsh-2024/admin": "workspace:*",
     "@wsh-2024/app": "workspace:*",
+    "buffer": "6.0.3",
     "fzstd": "0.1.0",
     "jimp": "0.22.12",
     "p-queue": "8.0.1",
@@ -21,14 +23,22 @@
     "swr": "2.2.4"
   },
   "devDependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "0.2.3",
+    "@esbuild-plugins/node-modules-polyfill": "0.2.2",
     "@node-kit/pnpm-workspace-root": "3.2.0",
     "@types/jimp": "0.2.28",
     "@types/path-browserify": "1.0.2",
     "@types/react": "18.2.0",
     "@types/react-dom": "18.2.1",
     "@types/serviceworker": "0.0.83",
+    "@vitejs/plugin-react": "4.2.1",
     "esbuild-plugin-polyfill-node": "0.3.0",
     "pkg-dir": "5.0.0",
-    "tsup": "8.0.1"
+    "rollup-plugin-node-polyfills": "0.2.1",
+    "rollup-plugin-visualizer": "5.12.0",
+    "tsup": "8.0.1",
+    "vite": "5.2.4",
+    "vite-plugin-node-polyfills": "0.21.0",
+    "vite-plugin-node-stdlib-browser": "0.2.1"
   }
 }

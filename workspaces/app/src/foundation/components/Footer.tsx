@@ -15,6 +15,12 @@ import { Button } from './Button';
 import { Flex } from './Flex';
 import { Spacer } from './Spacer';
 import { Text } from './Text';
+// import company from './company.txt';
+// import contact from './contact.txt';
+import logo from './cyber-toon.svg';
+// import overview from './overview.txt';
+// import question from './question.txt';
+// import term from './term.txt';
 
 const _Button = styled(Button)`
   color: ${Color.MONO_A};
@@ -112,7 +118,7 @@ export const Footer: React.FC = () => {
   return (
     <Box as="footer" backgroundColor={Color.Background} p={Space * 1}>
       <Flex align="flex-start" direction="column" gap={Space * 1} justify="flex-start">
-        <img alt="Cyber TOON" src="/assets/cyber-toon.svg" />
+        <img alt="Cyber TOON" src={logo} />
         <Flex align="start" direction="row" gap={Space * 1.5} justify="center">
           <_Button disabled={!isClient} onClick={handleRequestToTermDialogOpen}>
             利用規約
@@ -134,3 +140,5 @@ export const Footer: React.FC = () => {
     </Box>
   );
 };
+
+export default Footer;
